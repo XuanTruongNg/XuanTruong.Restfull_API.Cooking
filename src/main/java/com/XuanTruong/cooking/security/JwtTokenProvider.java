@@ -46,7 +46,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Lấy thông tin user từ jwt
     public Integer getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(JWT_SECRET)

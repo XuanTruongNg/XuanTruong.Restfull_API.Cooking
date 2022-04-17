@@ -1,10 +1,7 @@
 package com.XuanTruong.cooking.controller;
 
 import com.XuanTruong.cooking.DTO.DishesDTO;
-import com.XuanTruong.cooking.payload.DishesCreatorResponse;
-import com.XuanTruong.cooking.payload.DishesDeleteResponse;
-import com.XuanTruong.cooking.payload.DishesRequest;
-import com.XuanTruong.cooking.payload.DishesUpdatingResponse;
+import com.XuanTruong.cooking.payload.*;
 import com.XuanTruong.cooking.service.IDishesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +14,16 @@ public class DishesController {
     IDishesService dishesService;
 
     @PostMapping("/dishes")
-    public DishesCreatorResponse createDishes(@RequestBody DishesRequest dishesRequest, HttpServletRequest request){
-        return dishesService.createDishes(dishesRequest,dishesService.getUserId(request));
+    public DishesCreatorResponse createDishes(@RequestBody DishesRequest dishesRequest){
+        return dishesService.createDishes(dishesRequest);
     }
     @PutMapping("/dishes/{id}")
-    public DishesUpdatingResponse updateDishes(@RequestBody DishesRequest dishesRequest,HttpServletRequest request ){
-        return dishesService.updateDishes(dishesRequest,dishesService.getUserId(request));
+    public DishesUpdatingResponse updateDishes(@RequestBody DishesUpdateRequest dishesUpdateRequest){
+        return dishesService.updateDishes(dishesUpdateRequest);
     }
     @DeleteMapping("/dishes/{id}")
-    public DishesDeleteResponse deleteDishes(@PathVariable(name = "id") Integer dishesId,HttpServletRequest request){
-        return dishesService.deleteDishes(dishesId,dishesService.getUserId(request));
+    public DishesDeleteResponse deleteDishes(@PathVariable(name = "id") Integer dishesId){
+        return dishesService.deleteDishes(dishesId);
     }
     @GetMapping("/dishes")
     public List<DishesDTO> getDishes(@RequestParam String nameDishes){

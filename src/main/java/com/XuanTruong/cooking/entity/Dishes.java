@@ -45,10 +45,10 @@ public class Dishes {
     private Date createdAt;
 
     @Column(name = "updatedAt")
-    private java.sql.Timestamp updatedAt;
+    private Date updatedAt;
 
     @Column(name = "deletedAt")
-    private java.sql.Timestamp deletedAt;
+    private Date deletedAt;
 
     @Column(name = "status")
     private Boolean status;
