@@ -1,31 +1,34 @@
 package com.XuanTruong.cooking.service;
 
+import com.XuanTruong.cooking.DTO.CommentDTO;
 import com.XuanTruong.cooking.DTO.DishesDTO;
 import com.XuanTruong.cooking.DTO.UserDTO;
+import com.XuanTruong.cooking.entity.Comment;
 import com.XuanTruong.cooking.entity.CustomUserDetails;
 import com.XuanTruong.cooking.entity.Dishes;
 import com.XuanTruong.cooking.entity.User;
 import com.XuanTruong.cooking.payload.*;
+import com.XuanTruong.cooking.reponsitory.ICommentRepository;
 import com.XuanTruong.cooking.reponsitory.IDishesRepository;
 import com.XuanTruong.cooking.reponsitory.IUserRepository;
-import com.XuanTruong.cooking.security.JwtTokenProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+@Component
 public class DishesService implements IDishesService{
     @Autowired
     ModelMapper mapper;
     @Autowired
-    JwtTokenProvider tokenProvider;
-    @Autowired
     IDishesRepository dishesRepository;
     @Autowired
     IUserRepository userRepository;
+    @Autowired
+    ICommentRepository commentRepository;
 
     private Integer getCurrentUserId(){
         CustomUserDetails userDetails = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -33,15 +36,27 @@ public class DishesService implements IDishesService{
         return userRepository.findUsersIdByUserName(currentUserName);
     }
     private  Boolean checkOwnerAndExisted(Dishes dishes) {
-        if (dishes == null) {
-            return false;
-        } else {
-            if (dishes.getUserId().equals(getCurrentUserId())) {
-                return true;
-            } else {
-                return false;
-            }
+        if (dishes != null && dishes.getUserId().equals(getCurrentUserId())) {
+            return true;
         }
+        return false;
+    }
+    private  DishesDTO makeDishesDto(Dishes dishes){
+        User owner = userRepository.getById(dishes.getUserId());
+        // get list comment of this dishes
+        List<Comment> comments = commentRepository.findCommentByDishesId(dishes.getId());
+        List<CommentDTO> commentDTOS = new ArrayList<CommentDTO>();
+        for( Comment comment:comments){
+            String userName = userRepository.findUsersNameById(comment.getUserId());// list username?
+            CommentDTO commentDTO = mapper.map(comment,CommentDTO.class);
+            commentDTO.setUserName(userName);
+            commentDTOS.add(commentDTO);
+        }
+        DishesDTO dishesDTO = mapper.map(dishes,DishesDTO.class);
+        UserDTO userDTO = mapper.map(owner,UserDTO.class);
+        dishesDTO.setComments(commentDTOS);
+        dishesDTO.setOwner(userDTO);
+        return dishesDTO;
     }
     @Override
     public DishesCreatorResponse createDishes(DishesRequest dishesRequest) {
@@ -55,7 +70,7 @@ public class DishesService implements IDishesService{
     @Override
     public DishesDeleteResponse deleteDishes(Integer dishesId) {
         Dishes dishes = dishesRepository.findDishesById(dishesId);
-        if(checkOwnerAndExisted(dishes)){;
+        if(checkOwnerAndExisted(dishes)){
             dishes.setStatus(false);
             dishesRepository.save(dishes);
             return new DishesDeleteResponse("oki");
@@ -81,27 +96,19 @@ public class DishesService implements IDishesService{
 
     @Override
     public List<DishesDTO> getDishesByName(String name) {
-        return null;
+        List<Dishes> dishes= dishesRepository.findDishesByName(name);
+        List<DishesDTO> dishesDTOS = new ArrayList<DishesDTO>();
+        for(Dishes dishes1: dishes){
+            dishesDTOS.add(makeDishesDto(dishes1));
+        }
+        return dishesDTOS;
     }
 
     @Override
-    public Dishes getDishesById(Integer id) {
-
-        return null;
-    }
-    public  DishesDTO getDishesDTOById(Integer id){
+    public DishesDTO getDisheDTOById(Integer id) {
         Dishes dishes = dishesRepository.getById(id);
-        User owner = userRepository.getById(dishes.getUserId());
-        DishesDTO dishesDTO = mapper.map(dishes,DishesDTO.class);
-        UserDTO userDTO = mapper.map(owner,UserDTO.class);
-        dishesDTO.setOwner(userDTO);
-        return dishesDTO;
+        return makeDishesDto(dishes);
     }
 
-//    @Override
-//    public Integer getUserId(HttpServletRequest request) {
-//        String bearerToken = request.getHeader("Authorization");
-//        String jwt = bearerToken.substring(7);
-//        return tokenProvider.getUserIdFromJWT(jwt);
-//    }
+
 }

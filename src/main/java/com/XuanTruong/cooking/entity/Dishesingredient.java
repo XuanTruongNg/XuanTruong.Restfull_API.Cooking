@@ -1,16 +1,21 @@
 package com.XuanTruong.cooking.entity;
 
+import com.XuanTruong.cooking.entity.key.DishesIngredientPrimaryKey;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "dishesingredient")
-public class Dishesingredient {
+@IdClass(DishesIngredientPrimaryKey.class)
+public class Dishesingredient implements Serializable {
     @Id
     @Column(name = "ingredientID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer ingredientId;
 
     @Id

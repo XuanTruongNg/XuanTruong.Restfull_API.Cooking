@@ -37,10 +37,10 @@ public class User {
     private Date createdAt;
 
     @Column(name = "updatedAt")
-    private java.sql.Timestamp updatedAt;
+    private Date updatedAt;
 
     @Column(name = "deleteAt")
-    private java.sql.Timestamp deleteAt;
+    private Date deleteAt;
 
     @Column(name = "status")
     private Boolean status;

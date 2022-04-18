@@ -1,16 +1,18 @@
-package com.XuanTruong.cooking.DTO;
+package com.XuanTruong.cooking.entity.key;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDTO {
+@EqualsAndHashCode
+public class CommentPrimayKey implements Serializable {
     private Integer commentId;
     private Integer userId;
-    private String  userName;
     private Integer dishesId;
-    private String message;
+
 }

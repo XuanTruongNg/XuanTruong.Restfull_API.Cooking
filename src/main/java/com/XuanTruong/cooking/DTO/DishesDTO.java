@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 @Data
 @AllArgsConstructor
@@ -33,11 +32,4 @@ public class DishesDTO {
 
     private String mediaName;
 
-    private Date createdAt;
-
-    private Date updatedAt;
-
-    private Date deletedAt;
-
-    private Boolean status;
 }

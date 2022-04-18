@@ -1,16 +1,22 @@
 package com.XuanTruong.cooking.entity;
 
+import com.XuanTruong.cooking.entity.key.CommentPrimayKey;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "comment")
-public class Comment {
+@IdClass(CommentPrimayKey.class)
+public class Comment implements Serializable {
     @Id
     @Column(name = "commentID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
 
     @Id
@@ -25,16 +31,15 @@ public class Comment {
     private String message;
 
     @Column(name = "createdAt")
-    private java.sql.Timestamp createdAt;
+    private Date createdAt;
 
     @Column(name = "updatedAt")
-    private java.sql.Timestamp updatedAt;
+    private Date updatedAt;
 
     @Column(name = "deletedAt")
-    private java.sql.Timestamp deletedAt;
+    private Date deletedAt;
 
     @Column(name = "status")
     private Boolean status;
-
 
 }
