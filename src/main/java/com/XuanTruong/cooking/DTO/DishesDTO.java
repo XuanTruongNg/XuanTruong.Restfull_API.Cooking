@@ -26,8 +26,6 @@ public class DishesDTO {
 
     private Integer totalComment;
 
-    private List<CommentDTO> comments;
-
     private String mediaUrl;
 
     private String mediaName;

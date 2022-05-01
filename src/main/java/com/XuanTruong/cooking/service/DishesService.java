@@ -1,12 +1,11 @@
 package com.XuanTruong.cooking.service;
 
-import com.XuanTruong.cooking.DTO.CommentDTO;
 import com.XuanTruong.cooking.DTO.DishesDTO;
 import com.XuanTruong.cooking.DTO.UserDTO;
-import com.XuanTruong.cooking.entity.Comment;
 import com.XuanTruong.cooking.entity.CustomUserDetails;
 import com.XuanTruong.cooking.entity.Dishes;
 import com.XuanTruong.cooking.entity.User;
+import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.*;
 import com.XuanTruong.cooking.reponsitory.ICommentRepository;
 import com.XuanTruong.cooking.reponsitory.IDishesRepository;
@@ -30,57 +29,51 @@ public class DishesService implements IDishesService{
     @Autowired
     ICommentRepository commentRepository;
 
-    private Integer getCurrentUserId(){
+    private User getCurrentUser(){
         CustomUserDetails userDetails = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String currentUserName = userDetails.getUsername();
-        return userRepository.findUsersIdByUserName(currentUserName);
+        return userRepository.findByUserName(currentUserName);
     }
     private  Boolean checkOwnerAndExisted(Dishes dishes) {
-        if (dishes != null && dishes.getUserId().equals(getCurrentUserId())) {
+        if (dishes != null && dishes.getUserId().equals(getCurrentUser().getUserId())) {
             return true;
         }
         return false;
     }
     private  DishesDTO makeDishesDto(Dishes dishes){
         User owner = userRepository.getById(dishes.getUserId());
-        // get list comment of this dishes
-        List<Comment> comments = commentRepository.findCommentByDishesId(dishes.getId());
-        List<CommentDTO> commentDTOS = new ArrayList<CommentDTO>();
-        for( Comment comment:comments){
-            String userName = userRepository.findUsersNameById(comment.getUserId());// list username?
-            CommentDTO commentDTO = mapper.map(comment,CommentDTO.class);
-            commentDTO.setUserName(userName);
-            commentDTOS.add(commentDTO);
-        }
         DishesDTO dishesDTO = mapper.map(dishes,DishesDTO.class);
         UserDTO userDTO = mapper.map(owner,UserDTO.class);
-        dishesDTO.setComments(commentDTOS);
         dishesDTO.setOwner(userDTO);
         return dishesDTO;
     }
     @Override
-    public DishesCreatorResponse createDishes(DishesRequest dishesRequest) {
+    public DishesResponse createDishes(DishesRequest dishesRequest) {
         Dishes dishes = mapper.map(dishesRequest,Dishes.class);
         dishes.setCreatedAt(new Date());
-        dishes.setUserId(getCurrentUserId());
+        dishes.setUserId(getCurrentUser().getUserId());
         dishes.setStatus(true);
         dishesRepository.save(dishes);
-        return new DishesCreatorResponse("ok");
+        DishesDTO dishesDTO = mapper.map(dishes,DishesDTO.class);
+        DishesResponse dishesResponse = new DishesResponse();
+        dishesResponse.setDishesDTO(dishesDTO);
+        dishesResponse.setStatus(Status.SUCCESSFULL);
+        return dishesResponse;
     }
     @Override
-    public DishesDeleteResponse deleteDishes(Integer dishesId) {
+    public Status deleteDishes(Integer dishesId) {
         Dishes dishes = dishesRepository.findDishesById(dishesId);
         if(checkOwnerAndExisted(dishes)){
             dishes.setStatus(false);
             dishesRepository.save(dishes);
-            return new DishesDeleteResponse("oki");
+            return Status.SUCCESSFULL;
         }else{
-            return new DishesDeleteResponse("false");
+            return Status.FAILS;
         }
     }
 
     @Override
-    public DishesUpdatingResponse updateDishes(DishesUpdateRequest dishesUpdateRequest) {
+    public DishesResponse updateDishes(DishesRequest dishesUpdateRequest) {
         Dishes dishes = dishesRepository.findDishesById(dishesUpdateRequest.getId());
         if(checkOwnerAndExisted(dishes)){
             dishes.setDishesName(dishesUpdateRequest.getDishesName());
@@ -91,7 +84,11 @@ public class DishesService implements IDishesService{
             dishes.setUpdatedAt(new Date());
             dishesRepository.save(dishes);
         }
-        return null;
+        DishesDTO dishesDTO = makeDishesDto(dishes);
+        DishesResponse dishesResponse = new DishesResponse();
+        dishesResponse.setDishesDTO(dishesDTO);
+        dishesResponse.setStatus(Status.SUCCESSFULL);
+        return dishesResponse;
     }
 
     @Override

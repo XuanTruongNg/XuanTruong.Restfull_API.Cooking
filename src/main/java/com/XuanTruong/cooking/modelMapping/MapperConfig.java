@@ -1,4 +1,4 @@
-package com.XuanTruong.cooking.modalMapping;
+package com.XuanTruong.cooking.modelMapping;
 
 
 import org.modelmapper.ModelMapper;

@@ -1,9 +1,9 @@
 package com.XuanTruong.cooking.controller;
 import com.XuanTruong.cooking.entity.CustomUserDetails;
+import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.LoginRequest;
 import com.XuanTruong.cooking.payload.LoginResponse;
 import com.XuanTruong.cooking.payload.RegistrationRequest;
-import com.XuanTruong.cooking.payload.RegistrationResponse;
 import com.XuanTruong.cooking.security.JwtTokenProvider;
 import com.XuanTruong.cooking.service.IRegisterService;
 import com.XuanTruong.cooking.service.UserService;
@@ -42,11 +42,11 @@ public class UserController {
 
         // registration
         @PostMapping("/registration")
-        public RegistrationResponse  registration(@RequestBody RegistrationRequest regist){
+        public Status registration(@RequestBody RegistrationRequest regist){
             return registerService.makeResponseForRegis(regist);
         }
         @GetMapping("/confirm")
-        public RegistrationResponse comfirm(@RequestParam String token){
+        public Status comfirm(@RequestParam String token){
             return registerService.makeResponseForConfirmRegis(token);
         }
         @GetMapping("/hello")

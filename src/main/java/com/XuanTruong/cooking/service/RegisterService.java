@@ -2,17 +2,17 @@ package com.XuanTruong.cooking.service;
 
 
 import com.XuanTruong.cooking.entity.User;
+import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.RegistrationRequest;
-import com.XuanTruong.cooking.payload.RegistrationResponse;
 import com.XuanTruong.cooking.reponsitory.IUserRepository;
 import com.XuanTruong.cooking.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import static com.XuanTruong.cooking.security.SecurityConstants.lINK_CONFIRMATION;
 
 @Component
 public class RegisterService implements IRegisterService{
-    private final String linkConfirm;
     @Autowired
     private IMailService mailService;
     @Autowired
@@ -22,13 +22,9 @@ public class RegisterService implements IRegisterService{
     @Autowired
     private JwtTokenProvider tokenProvider;
 
-    public RegisterService(@Value("${lINK_CONFIRMATION}") String linkConfirm) {
-        this.linkConfirm = linkConfirm;
-    }
-
     @Override
     public void sendEmail(String to, String jwt) {
-        String body = linkConfirm + jwt;
+        String body = lINK_CONFIRMATION + jwt;
         mailService.sendEmail(to,body);
     }
     @Override
@@ -49,29 +45,29 @@ public class RegisterService implements IRegisterService{
     }
 
     @Override
-    public RegistrationResponse makeResponseForRegis(RegistrationRequest regist) {
+    public Status makeResponseForRegis(RegistrationRequest regist) {
         if(checkEmailExist(regist.getEmail())){
-            return new RegistrationResponse("Email already is existed");
+            return Status.MAIL_EXISTED ;
         }
         if(checkUserExist(regist.getUserName())){
-            return new RegistrationResponse("username already is existed");
+            return Status.USER_NAME_EXISTED;
         }
         userService.createUser(regist);
         // tao token va dua cho nguoi
         String jwtConfirmation = tokenProvider.generateTokenForConfirmation(userService.getUserByUsername(regist.getUserName()));
         sendEmail(regist.getEmail(),jwtConfirmation);
-        return new RegistrationResponse("please check your email and enable your account");
+        return Status.PLEASE_CHECK_YOUR_MAILS;
 
     }
 
     @Override
-    public RegistrationResponse makeResponseForConfirmRegis(String token) {
+    public Status makeResponseForConfirmRegis(String token) {
         if(tokenProvider.validateToken(token)){
             int userId = tokenProvider.getUserIdFromJWT(token);
             enableUser(userId);
-            return new RegistrationResponse("welcome to cooking app");
+            return Status.SUCCESSFULL;
         }else {
-            return new RegistrationResponse("sorry confirmation timeout");
+            return Status.FAILS;
         }
     }
 

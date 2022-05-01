@@ -1,6 +1,7 @@
 package com.XuanTruong.cooking.controller;
 
 import com.XuanTruong.cooking.DTO.DishesDTO;
+import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.*;
 import com.XuanTruong.cooking.service.IDishesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,15 @@ public class DishesController {
     IDishesService dishesService;
 
     @PostMapping("/dishes")
-    public DishesCreatorResponse createDishes(@RequestBody DishesRequest dishesRequest){
+    public DishesResponse createDishes(@RequestBody DishesRequest dishesRequest){
         return dishesService.createDishes(dishesRequest);
     }
     @PutMapping("/dishes/{id}")
-    public DishesUpdatingResponse updateDishes(@RequestBody DishesUpdateRequest dishesUpdateRequest){
+    public DishesResponse updateDishes(@RequestBody DishesRequest dishesUpdateRequest){
         return dishesService.updateDishes(dishesUpdateRequest);
     }
     @DeleteMapping("/dishes/{id}")
-    public DishesDeleteResponse deleteDishes(@PathVariable(name = "id") Integer dishesId){
+    public Status deleteDishes(@PathVariable(name = "id") Integer dishesId){
         return dishesService.deleteDishes(dishesId);
     }
     @GetMapping("/dishes")

@@ -4,23 +4,16 @@ import com.XuanTruong.cooking.entity.CustomUserDetails;
 import com.XuanTruong.cooking.entity.User;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
+import static com.XuanTruong.cooking.security.SecurityConstants.*;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private final String JWT_SECRET ;
-
-    private final long JWT_EXPIRATION;
-
-    JwtTokenProvider(@Value("${JWT_SECRET}") String JWT_SECRET, @Value("${JWT_EXPIRATION}") long JWT_EXPIRATION) {
-        this.JWT_SECRET = JWT_SECRET;
-        this.JWT_EXPIRATION = JWT_EXPIRATION;
-    }
     public String generateTokenForConfirmation(User user){
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
@@ -32,14 +25,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     // Tạo ra jwt từ thông tin user
     public String generateToken(CustomUserDetails userDetails) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ id của user.
         return Jwts.builder()
-                .setSubject(Integer.toString(userDetails.getUser().getUserId()))
+                .setSubject(String.format("%s,%s", userDetails.getUser().getUserId(),userDetails.getUser().getRoleName()))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
@@ -51,8 +43,17 @@ public class JwtTokenProvider {
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
+        String[] subjects = claims.getSubject().split(",");
 
-        return Integer.parseInt(claims.getSubject());
+        return Integer.parseInt(subjects[0]);
+    }
+    public String getUserRoleFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+        String[] subjects = claims.getSubject().split(",");
+        return subjects[1];
     }
 
     public boolean validateToken(String authToken ) {
@@ -60,13 +61,13 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
+            log.error(INVALID);
         } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
+            log.error(EXPIRED);
         } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
+            log.error(UNSUPPORTED);
         } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty.");
+            log.error(CLAIMS_EMPTY);
         }
         return false;
     }
