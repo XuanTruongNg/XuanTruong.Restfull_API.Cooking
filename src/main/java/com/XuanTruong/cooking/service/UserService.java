@@ -1,8 +1,10 @@
 package com.XuanTruong.cooking.service;
 
 import com.XuanTruong.cooking.entity.CustomUserDetails;
+import com.XuanTruong.cooking.entity.Role;
 import com.XuanTruong.cooking.entity.User;
 import com.XuanTruong.cooking.payload.RegistrationRequest;
+import com.XuanTruong.cooking.reponsitory.IRoleRepository;
 import com.XuanTruong.cooking.reponsitory.IUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -21,6 +25,8 @@ public class UserService implements UserDetailsService {
     IUserRepository userRepository;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    private IRoleRepository roleRepository;
 
 
     @Override
@@ -65,10 +71,16 @@ public class UserService implements UserDetailsService {
     public void createUser(RegistrationRequest registrationRequest){
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
         User user = mapper.map(registrationRequest,User.class);
-        user.setRoleName("ROLE_USER");
         user.setPassWord(encoder.encode(registrationRequest.getPassWord()));
         user.setCreatedAt(new Date());
         user.setStatus(false);
         userRepository.save(user);
+        Role role = new Role();
+        role.setUserId(user.getUserId());
+        roleRepository.save(role);
+
+    }
+    public List<String> getRoleByUserId(Integer userId){
+        return roleRepository.getRoleByUserId(userId);
     }
 }

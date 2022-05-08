@@ -30,8 +30,7 @@ public class DishesService implements IDishesService{
     ICommentRepository commentRepository;
 
     private User getCurrentUser(){
-        CustomUserDetails userDetails = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String currentUserName = userDetails.getUsername();
+        String currentUserName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByUserName(currentUserName);
     }
     private  Boolean checkOwnerAndExisted(Dishes dishes) {
@@ -54,6 +53,7 @@ public class DishesService implements IDishesService{
         dishes.setUserId(getCurrentUser().getUserId());
         dishes.setStatus(true);
         dishesRepository.save(dishes);
+
         DishesDTO dishesDTO = mapper.map(dishes,DishesDTO.class);
         DishesResponse dishesResponse = new DishesResponse();
         dishesResponse.setDishesDTO(dishesDTO);

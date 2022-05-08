@@ -11,7 +11,6 @@ public class DishesRequest {
     private String dishesName;
     private String dishesDisc;
     private String summary;
-    private UserDTO Owner;
     private String mediaUrl;
     private String mediaName;
 }

@@ -1,6 +1,8 @@
 package com.XuanTruong.cooking.entity;
 
 import com.XuanTruong.cooking.entity.key.CommentPrimayKey;
+import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,30 +15,31 @@ import java.util.Date;
 @Entity
 @Table(name = "comment")
 @IdClass(CommentPrimayKey.class)
+@AllArgsConstructor
 public class Comment implements Serializable {
     @Id
-    @Column(name = "commentID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
 
     @Id
-    @Column(name = "userID")
+    @Column(name = "user_id")
     private Integer userId;
 
     @Id
-    @Column(name = "dishesID")
+    @Column(name = "dishes_id")
     private Integer dishesId;
 
     @Column(name = "message")
     private String message;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private Date updatedAt;
 
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @Column(name = "status")

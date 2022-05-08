@@ -28,8 +28,8 @@ public class RegisterService implements IRegisterService{
         mailService.sendEmail(to,body);
     }
     @Override
-    public void enableUser(int userId) {
-        User user = userRepository.findUsersById(userId);
+    public void enableUser(String userName) {
+        User user = userRepository.findByUserName(userName);
         user.setStatus(true);
         userRepository.save(user);
     }
@@ -63,8 +63,8 @@ public class RegisterService implements IRegisterService{
     @Override
     public Status makeResponseForConfirmRegis(String token) {
         if(tokenProvider.validateToken(token)){
-            int userId = tokenProvider.getUserIdFromJWT(token);
-            enableUser(userId);
+            String userName = tokenProvider.getUserName(token);
+            enableUser(userName);
             return Status.SUCCESSFULL;
         }else {
             return Status.FAILS;

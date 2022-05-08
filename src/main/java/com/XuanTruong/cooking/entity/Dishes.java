@@ -1,7 +1,9 @@
 package com.XuanTruong.cooking.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -11,47 +13,48 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "dishes")
+@AllArgsConstructor
 public class Dishes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dishesID")
+    @Column(name = "dishes_id")
     private Integer id;
 
-    @Column(name = "userID")
+    @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "dishesName")
+    @Column(name = "dishes_name")
     private String dishesName;
 
-    @Column(name = "dishesDisc")
+    @Column(name = "dishes_disc")
     private String dishesDisc;
 
     @Column(name = "summary")
     private String summary;
 
-    @Column(name = "averageRating")
+    @Nullable
+    @Column(name = "average_rating")
     private Double averageRating;
 
-    @Column(name = "totalComment")
+    @Column(name = "total_comment")
     private Integer totalComment;
 
-    @Column(name = "mediaUrl")
+    @Column(name = "media_url")
     private String mediaUrl;
 
-    @Column(name = "mediaName")
+    @Column(name = "media_name")
     private String mediaName;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private Date updatedAt;
 
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @Column(name = "status")
     private Boolean status;
-
 
 }

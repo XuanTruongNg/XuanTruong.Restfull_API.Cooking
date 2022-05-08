@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface IRegisterService {
     void sendEmail(String to, String jwt);
-    void enableUser(int userId);
+    void enableUser(String userName);
     Boolean checkUserExist( String username);
     Boolean checkEmailExist( String email);
     Status makeResponseForRegis(RegistrationRequest regist);

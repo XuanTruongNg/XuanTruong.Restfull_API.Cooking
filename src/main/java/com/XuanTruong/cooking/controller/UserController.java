@@ -1,5 +1,6 @@
 package com.XuanTruong.cooking.controller;
 import com.XuanTruong.cooking.entity.CustomUserDetails;
+import com.XuanTruong.cooking.entity.User;
 import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.LoginRequest;
 import com.XuanTruong.cooking.payload.LoginResponse;
@@ -13,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -36,7 +39,10 @@ public class UserController {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
+            Integer userId = userService.getUserByUsername(loginRequest.getUserName()).getUserId();
+            List<String> role = userService.getRoleByUserId(userId);
+            String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal(),role);
+            System.out.println(jwt);
             return new LoginResponse(jwt);
         }
 
