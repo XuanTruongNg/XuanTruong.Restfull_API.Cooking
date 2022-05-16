@@ -10,7 +10,7 @@ public class SecurityConstants {
     public  static final String CLAIMS_EMPTY  = "JWT claims string is empty.";
     public  static final String lINK_CONFIRMATION= "http://localhost:8072/confirm?token=";
     public  static final String ROLE = "ROLE";
-    ;
+
 
 
 

@@ -3,6 +3,7 @@ package com.XuanTruong.cooking.service;
 import com.XuanTruong.cooking.DTO.DishesDTO;
 import com.XuanTruong.cooking.message.Status;
 import com.XuanTruong.cooking.payload.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -11,6 +12,6 @@ public interface IDishesService {
     DishesResponse createDishes(DishesRequest dishesRequest);
     Status deleteDishes(Integer dishesId);
     DishesResponse updateDishes(DishesRequest dishesUpdateRequestRequest);
-    List<DishesDTO> getDishesByName(String name);
+    List<DishesDTO> getDishesByName(String name, Pageable pageable);
     DishesDTO getDisheDTOById(Integer id);
 }

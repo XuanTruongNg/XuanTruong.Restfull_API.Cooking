@@ -33,13 +33,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                  Claims claim = tokenProvider.getBodyJWT(jwt);
+
                  String userName = claim.getSubject();
-                 List<String> athorString= ( List<String>)claim.get(ROLE);
+                 List<String> athorString= (List<String>)claim.get(ROLE);
+
                  List<SimpleGrantedAuthority> authors = new ArrayList<>();
                  athorString.forEach( t->authors.add(new SimpleGrantedAuthority(t)));
+
                  UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userName,null,authors);
                  authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                  SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -53,7 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        // Kiểm tra xem header Authorization có chứa thông tin jwt không
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

@@ -12,6 +12,7 @@ import com.XuanTruong.cooking.reponsitory.IDishesRepository;
 import com.XuanTruong.cooking.reponsitory.IUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -92,8 +93,8 @@ public class DishesService implements IDishesService{
     }
 
     @Override
-    public List<DishesDTO> getDishesByName(String name) {
-        List<Dishes> dishes= dishesRepository.findDishesByName(name);
+    public List<DishesDTO> getDishesByName(String name, Pageable pageable) {
+        List<Dishes> dishes= dishesRepository.findDishesByName(name,pageable);
         List<DishesDTO> dishesDTOS = new ArrayList<DishesDTO>();
         for(Dishes dishes1: dishes){
             dishesDTOS.add(makeDishesDto(dishes1));

@@ -27,7 +27,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Tạo ra jwt từ thông tin user
     public String generateToken(CustomUserDetails userDetails, List<String> authorityList) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);

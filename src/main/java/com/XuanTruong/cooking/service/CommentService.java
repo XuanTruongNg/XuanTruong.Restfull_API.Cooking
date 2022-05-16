@@ -8,6 +8,7 @@ import com.XuanTruong.cooking.reponsitory.ICommentRepository;
 import com.XuanTruong.cooking.reponsitory.IUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ public class CommentService implements ICommentService {
     @Autowired
     ModelMapper mapper;
     @Override
-    public List<CommentDTO> getCommnetByDishesId(Integer dishesId) {
-        List<Comment> comments = commentRepository.findCommentByDishesId(dishesId);
+    public List<CommentDTO> getCommnetByDishesId(Integer dishesId, Pageable pageable) {
+        List<Comment> comments = commentRepository.findCommentByDishesId(dishesId,pageable);
         List<Integer> userIds = comments.stream().map(Comment::getUserId).collect(Collectors.toList());
         List<User> users = userRepository.findUsersById(userIds);
         List<CommentDTO> commentDTOS = new ArrayList<>();
